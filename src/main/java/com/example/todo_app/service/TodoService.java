@@ -17,15 +17,26 @@ public class TodoService {
     public List<Todo> findAll() {
         return repository.findAll();
     }
-    public Todo findById(Long id) {
-        return repository.findById(id).orElse(null);
-    }
 
     public Todo save(Todo todo) {
         return repository.save(todo);
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         repository.deleteById(id);
+        return repository.findById(id).isPresent();
+    }
+    public Todo update(Long id, Todo todo) {
+        Todo existingTodo = findById(id);
+        if (existingTodo != null) {
+            existingTodo.setTitle(todo.getTitle());
+            existingTodo.setCompleted(todo.isCompleted());
+            return save(existingTodo);
+        }
+        return null; // Return null if the todo was not found
+    }
+
+    public Todo findById(Long id) {
+        return repository.findById(id).orElse(null);
     }
 }
